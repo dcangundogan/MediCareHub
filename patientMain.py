@@ -9,12 +9,19 @@ from patientAppointment import AppointmentManager
 from patientsPrescription import PrescriptionsPage
 from patientsHistory import MedicalHistoryPage
 from patientProfile import ProfileMainPage
+from patientInsurance import InsuranceInfoPage
 
 class PatientMainPage:
     ekran = "1200x800"
     baslik = "Welcome"
 
     def __init__(self, patientid):
+        self.mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="bercan2003",
+            database="MediCareHub"
+        )
         self.patientid = patientid
         patientname = self.get_patient_name(patientid)
 
@@ -96,31 +103,34 @@ class PatientMainPage:
             manager.run()
         def getmedicalhistory():
             self.app.destroy()
-            manager =MedicalHistoryPage(self.patientid)
+            manager = MedicalHistoryPage(self.patientid)
             manager.run()
         def getpatientprofile():
             self.app.destroy()
             manager = ProfileMainPage(self.patientid)
             manager.run()
-
+        def getpatientinsurance():
+            self.app.destroy()
+            manager = InsuranceInfoPage(self.patientid, self.mydb, self.run)
+            manager.run()
 
         randevuButton = CTkButton(master=frame, text="Appointment", fg_color="#EEEEEE", command=getappointment,
                                   hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
                                   height=90, image=randevuimageIcon).pack(anchor="w", pady=(50, 0), padx=(45, 0))
 
-        reçeteButton = CTkButton(master=frame, text="Prescriptions ", fg_color="#EEEEEE",command=getprescription,
+        reçeteButton = CTkButton(master=frame, text="Prescriptions ", fg_color="#EEEEEE", command=getprescription,
                                  hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
                                  height=90, image=recetelogoIcon).pack(anchor="w", pady=(30, 0), padx=(375, 0))
 
-        medicalhistoryButton = CTkButton(master=frame, text="Medical History", fg_color="#EEEEEE",command=getmedicalhistory,
+        medicalhistoryButton = CTkButton(master=frame, text="Medical History", fg_color="#EEEEEE", command=getmedicalhistory,
                                   hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
                                   height=90, image=medikallogoIcon).pack(anchor="w", pady=(30, 0), padx=(45, 0))
 
-        sigortaButton = CTkButton(master=frame, text="Insurance", fg_color="#EEEEEE",
+        insuranceButton = CTkButton(master=frame, text="Insurance", fg_color="#EEEEEE", command=getpatientinsurance,
                                   hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
                                   height=90, image=sigortalogoIcon).pack(anchor="w", pady=(30, 0), padx=(375, 0))
 
-        profileButton = CTkButton(master=frame, text="Profile ", fg_color="#EEEEEE",command=getpatientprofile,
+        profileButton = CTkButton(master=frame, text="Profile ", fg_color="#EEEEEE", command=getpatientprofile,
                                  hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
                                  height=90, image=ıdlogoIcon).pack(anchor="w", pady=(30, 0), padx=(45, 0))
         self.app.mainloop()
@@ -142,7 +152,12 @@ class PatientMainPage:
     def run(self):
         self.app.mainloop()
 
-
-pg=PatientMainPage(1)
-
-
+if __name__ == "__main__":
+    mydb = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="bercan2003",
+        database="MediCareHub"
+    )
+    pg = PatientMainPage(1)
+    pg.run()
