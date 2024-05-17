@@ -1,11 +1,11 @@
 import customtkinter as ctk
 from PIL import Image
 import mysql.connector
-from patientEditProfile import EditProfilePage
+from doctorEditProfile import EditDoctorProfilePage
 
-class ProfileMainPage:
-    def __init__(self, patient_id):
-        self.patient_id = patient_id
+class DoctorProfileMainPage:
+    def __init__(self, doctor_id):
+        self.doctor_id = doctor_id
         self.mydb = mysql.connector.connect(
             host="localhost",
             user="root",
@@ -15,13 +15,13 @@ class ProfileMainPage:
 
         self.app = ctk.CTk()
         self.app.geometry("800x600")
-        self.app.title("Profile")
+        self.app.title("Doctor Profile")
         self.app.resizable(False, False)
 
         # Load images and convert them to CTkImage for customtkinter compatibility
         imgLogo = Image.open("images/logo.png").resize((300, 300))
         imgLogoicon = ctk.CTkImage(dark_image=imgLogo, light_image=imgLogo, size=(300, 300))
-        userLogo = Image.open("images/user.png").resize((120, 120))
+        userLogo = Image.open("images/medical-team.png").resize((120, 120))
         imgUsericon = ctk.CTkImage(dark_image=userLogo, light_image=userLogo, size=(120, 120))
 
         # Logo at the top left
@@ -39,8 +39,8 @@ class ProfileMainPage:
         userLabel.image = imgUsericon  # Keep a reference!
         userLabel.place(x=180, y=10)  # Adjust placement
 
-        # Display patient information
-        self.display_patient_info(frame)
+        # Display doctor information
+        self.display_doctor_info(frame)
 
         # Edit Profile Button
         edit_button = ctk.CTkButton(master=frame, text="Edit Profile", command=self.edit_profile)
@@ -48,19 +48,24 @@ class ProfileMainPage:
 
         self.app.mainloop()
 
-    def display_patient_info(self, frame):
-        # Fetch and display extended patient information
+    def display_doctor_info(self, frame):
+        # Fetch and display extended doctor information
         try:
             cursor = self.mydb.cursor()
-            query = "SELECT Patient_Fname, Patient_Lname, Phone, Email, Gender,  Address, Admisson_Date FROM Patient WHERE Patient_ID = %s"
-            cursor.execute(query, (self.patient_id,))
+            query = """
+                SELECT d.DoctorName, d.DoctorSurname, d.Specialization, dept.Dept_Name 
+                FROM Doctor d 
+                JOIN Department dept ON d.Dept_ID = dept.Dept_ID 
+                WHERE d.Doctor_ID = %s
+            """
+            cursor.execute(query, (self.doctor_id,))
             result = cursor.fetchone()
 
             if result:
-                labels = ['First Name:', 'Last Name:', 'Phone:', 'Email:', 'Gender:',  'Address:','Admission Date:']
+                labels = ['First Name:', 'Last Name:', 'Specialization:', 'Department:']
                 for index, (label, value) in enumerate(zip(labels, result)):
                     if value is not None:  # Check if the value is not None
-                        info_label = ctk.CTkLabel(master=frame, text=f"{label} {value}", font=("Arial", 12),text_color="#000000")
+                        info_label = ctk.CTkLabel(master=frame, text=f"{label} {value}", font=("Arial", 12), text_color="#000000")
                         info_label.place(x=20, y=150 + 30 * index)  # Adjust placement
 
         except mysql.connector.Error as error:
@@ -70,9 +75,12 @@ class ProfileMainPage:
                 cursor.close()
 
     def edit_profile(self):
-        EditProfilePage(self.patient_id,self.mydb)
-
+        EditDoctorProfilePage(self.doctor_id, self.mydb)
 
     def run(self):
         self.app.mainloop()
 
+# Usage example
+if __name__ == "__main__":
+    doctor_id = 1  # Replace with the actual doctor ID
+    DoctorProfileMainPage(doctor_id).run()

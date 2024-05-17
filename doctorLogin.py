@@ -12,7 +12,7 @@ import subprocess
 import sys
 import mysql.connector
 from tkinter import messagebox
-from doctorMain import doctorMainPage
+from doctorMain import DoctorMainPage
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -189,7 +189,7 @@ app.mainloop()
 
 
 if booleanvar == 1:
-   doctorMainPage(mylist[0])
+   DoctorMainPage(mylist[0])
 
 
 

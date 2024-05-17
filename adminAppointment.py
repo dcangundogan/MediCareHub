@@ -96,7 +96,7 @@ def generate_unique_appointment_id():
             return new_id
         cursor.close()
 
-# Function to submit a new appointment to the database
+
 def submit_new_appointment():
     appointment_id = generate_unique_appointment_id()
     date = new_appointment_date.get_date()
