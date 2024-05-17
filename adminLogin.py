@@ -1,18 +1,20 @@
-import time
+import sys
 
 import customtkinter
 import tkinter
-from tkinter import Tk, messagebox
 from customtkinter import *
 from tkinter import *
 from PIL import *
 import mysql.connector
 from CTkMessagebox import *
+from customtkinter import CTkButton
+import webbrowser
 import subprocess
 import sys
-import mysql.connector
-from tkinter import messagebox
-from doctorMain import doctorMainPage
+from adminMain import AdminMainPage
+
+
+
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -24,10 +26,14 @@ mydb = mysql.connector.connect(
 
 
 
+
+booleanvar =1
 app = CTk()
 
-app.geometry("600x480")
 
+mylist={}
+
+app.geometry("600x480")
 
 app.resizable(True,True)
 imgLogo = Image.open("images/logo.png")
@@ -44,8 +50,6 @@ maillogo = Image.open("images/mail.png")
 genderlogo = Image.open("images/symbol.png")
 bloodlogo = Image.open("images/blood-analysis.png")
 addresslogo = Image.open("images/location-pin.png")
-
-
 
 imgLogoCTk =CTkImage(dark_image=imgLogo,light_image=imgLogo,size=(300,480))
 
@@ -79,37 +83,28 @@ frame.pack(expand=True, side="right")
 #MediCareHub frame bitis
 
 def homepageCommand():
-
-    subprocess.Popen([sys.executable, "mainPage.py"])
+    subprocess.Popen([sys.executable,  "mainPage.py"])
+    # subprocess.run(["python", "mainPage.py"])
     exit()
 
 
-homepageButton = (CTkButton(master=frame,command=homepageCommand, text="Home Page", fg_color="#ffffff", hover_color="#E44982",
+homepageButton = (CTkButton(master=frame,command=homepageCommand, text=" Home Page", fg_color="#ffffff", hover_color="#E44982",
                         font=("Arial Bold", 9), text_color="#601E88", width=60,height=20)
                         .pack(anchor="w", pady=(10, 0), padx=(10, 0)))
-
 
 medicarehubLabel = CTkLabel(master=frame,text_color="#261E76",anchor="w",justify=CENTER,
                             text="Welcome to \n"
                                  "MediCareHub!",
-                            font=("Arial Bold",28)).pack(anchor="w",pady=(50,5),padx=(65,0))
+                            font=("Arial Bold",28)).pack(anchor="w",pady=(35,5),padx=(65,0))
 
 signLabel = CTkLabel(master=frame,text_color="#7E7E7E",anchor="w",justify="left",
-                        text="Hello admin please login to    \n"
-                                 "   MediCareHub System!",
-                            font=("Arial Bold",14)).pack(anchor="w",pady=(5,0), padx=(75,0))
-
-warningLabel = CTkLabel(master=frame,text_color="#7E7E7E",anchor="w",justify=CENTER,
-                       text=" Unauthorized entry is prohibited!",
-                       font=("Arial Bold",14)).pack(anchor="w",pady=(0,0), padx=(50,0))
-
-workerLabel = CTkLabel(master=frame,text_color="#7E7E7E",anchor="w",justify=CENTER,
-                       text="WİSH YOU GOOD WORK",
-                       font=("Arial Bold",14)).pack(anchor="w",pady=(0,0), padx=(75,0))
+                            text="       Please login to    \n"
+                                 "MediCareHub System!",
+                            font=("Arial Bold",14)).pack(anchor="w",pady=(5,0), padx=(85,0))
 
 usernameLabel = CTkLabel(master=frame,text_color="#7E7E7E",anchor="w",justify=CENTER,
                             text=" Username:",
-                            font=("Arial Bold",14),image=userIcon,compound="left").pack(anchor="w",pady=(15,0),padx=(30,0))
+                            font=("Arial Bold",14),image=userIcon,compound="left").pack(anchor="w",pady=(25,0),padx=(30,0))
 
 usernameEntry = CTkEntry(master=frame,width=240,height=30 ,fg_color="#EEEEEE",border_color="#261E76",border_width=2
                          ,text_color="#000000")
@@ -129,10 +124,24 @@ passwordEntry.pack(anchor="w",padx=(30,0))
 
 
 
-def admingiriscommand():
-    subprocess.Popen([sys.executable, "Anaekran.py"])
 
-    sys.exit()
+
+
+
+
+def createAccountCommand():
+    subprocess.Popen([sys.executable,  "createAccount.py"])
+    # subprocess.run(["python", "mainPage.py"])
+    exit()
+
+
+
+
+app.title("MediCareHub Login Page")
+
+set_appearance_mode("dark")
+
+
 
 def loginChecker():
     try:
@@ -145,53 +154,67 @@ def loginChecker():
 
         mycursor = mydb.cursor()
 
-
-
-        # Update the column name based on your table schema
-        query = "SELECT password FROM admin WHERE username = %s"
+                # Update the column name based on your table schema
+        query = "SELECT admin_id,password FROM admin WHERE username = %s"
         mycursor.execute(query, (username,))
 
-        myresult = mycursor.fetchone()
+        myresult = mycursor.fetchall()
+
 
         if myresult:
-            real_password = myresult[0]
+
+            real_password = myresult[0][1]
 
             if real_password == password:
+                booleanvar=1
                 CTkMessagebox(title="Info", message="Welcome to MediCareHub Services!")
+                mylist[0]=myresult[0][0]
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
             else:
+                booleanvar=0
                 CTkMessagebox(title="Error", message="Username or password is incorrect.", icon="cancel")
         else:
+            booleanvar = 0
             CTkMessagebox(title="Error", message="No access: User not found.", icon="cancel")
 
     except mysql.connector.Error as e:
-        print(f"Database error: {e}")
-        CTkMessagebox(title="Error", message="Database error: Please check the logs for details.", icon="cancel")
-
-
-
-
-
-
-
-app.title("MediCareHub Login Page")
-
-set_appearance_mode("light")
-
-
-
-
-
+      booleanvar = 0
+      print(f"Database error: {e}")
+      CTkMessagebox(title="Error",message="Database error: Please check the logs for details.",icon = "cancel")
 
 
 loginButton = CTkButton(master=frame,command=loginChecker, text="Login", fg_color="#601E88", hover_color="#E44982",
-                        font=("Arial Bold", 12), text_color="#ffffff", width=240,height=35).pack(anchor="w", pady=(30, 0), padx=(30, 0))
-
-
-
+                        font=("Arial Bold", 12), text_color="#ffffff", width=240,height=30).pack(anchor="w", pady=(30, 0), padx=(30, 0))
+googleButton= CTkButton(master=frame, text="Continue With Google",   fg_color="#EEEEEE", hover_color="#EEEEEE",
+                        font=("Arial Bold", 11), text_color="#601E88", width=240, image=google_icon).pack(anchor="w", pady=(10, 0), padx=(30, 0))
 
 
 app.mainloop()
+
+
+
+
+
+if booleanvar == 1:
+
+
+    AdminMainPage(mylist[0])
+
+
+
