@@ -7,6 +7,7 @@ from CTkMessagebox import CTkMessagebox
 from PIL import Image
 from tkcalendar import DateEntry
 from datetime import datetime
+import doctorMain  # Make sure this import is correct
 
 class DoctorPrescriptionsPage:
     def __init__(self, doctor_id):
@@ -77,6 +78,10 @@ class DoctorPrescriptionsPage:
         submit_button = CTkButton(master=right_frame, text="Submit", command=self.submit_prescription)
         submit_button.pack(pady=20)
 
+        # Back Button
+        back_button = CTkButton(master=right_frame, text="Back", command=self.go_back_to_main_page)
+        back_button.pack(pady=10)
+
         # Fetch and display medicines
         self.fetch_medicines()
 
@@ -119,11 +124,10 @@ class DoctorPrescriptionsPage:
         except Exception as e:
             CTkMessagebox(title="Error", message=f"An error occurred: {e}", icon="cancel")
 
+    def go_back_to_main_page(self):
+        self.app.destroy()
+        doctor_main_page = doctorMain.DoctorMainPage(self.doctor_id)
+        doctor_main_page.run()
+
     def run(self):
         self.app.mainloop()
-
-# Example usage
-if __name__ == "__main__":
-    doctor_id = 1  # Replace with the actual doctor ID
-    prescriptions_page = DoctorPrescriptionsPage(doctor_id)
-    prescriptions_page.run()

@@ -1,0 +1,14 @@
+
+DOCTOR APPOINTMENT CLASS
+query = """
+        INSERT INTO appointment (Appointment_ID, Scheduled_On, Date, Time, Doctor_ID, Patient_ID)
+        VALUES (%s, CURDATE(), %s, %s, %s, %s)
+        """ #inserting new appointment into the database table
+
+"SELECT Patient_ID FROM patient WHERE Patient_ID = %s" #gets the patient id
+
+
+
+DOCTOR PRESCRIPTIONS
+ query="SELECT M_Name FROM Medicine"
+ #selects medicine name for the combobox(codeblock)

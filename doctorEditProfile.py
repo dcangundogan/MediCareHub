@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import messagebox, ttk
 import mysql.connector
+import doctorProfile  # Ensure you have the doctorProfileMain module correctly implemented
 
 class EditDoctorProfilePage:
     def __init__(self, doctor_id, mydb):
@@ -44,6 +45,10 @@ class EditDoctorProfilePage:
         # Save button
         save_button = ctk.CTkButton(self.edit_window, text="Save Changes", command=self.save_changes)
         save_button.pack(pady=20)
+
+        # Back button
+        back_button = ctk.CTkButton(self.edit_window, text="Back", command=self.go_back)
+        back_button.pack(pady=10)
 
     def fetch_doctor_data(self):
         data = {}
@@ -104,6 +109,7 @@ class EditDoctorProfilePage:
                 self.mydb.commit()
                 messagebox.showinfo("Update Successful", "Profile updated successfully.")
                 self.edit_window.destroy()
+                self.go_back()  # Navigate back after saving changes
             except mysql.connector.Error as error:
                 self.mydb.rollback()
                 messagebox.showerror("Database Error", f"An error occurred: {error}")
@@ -111,3 +117,7 @@ class EditDoctorProfilePage:
                 self.mydb.autocommit = True
                 cursor.close()
 
+    def go_back(self):
+        self.edit_window.destroy()
+        doctor_profile_page = doctorProfile.DoctorProfileMainPage(self.doctor_id)
+        doctor_profile_page.run()

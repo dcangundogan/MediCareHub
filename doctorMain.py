@@ -3,11 +3,11 @@ import subprocess
 from customtkinter import *
 from PIL import Image
 import mysql.connector
-from doctorAppointment import AppointmentManager
-from doctorProfile import DoctorProfileMainPage
-from doctorPrescription import DoctorPrescriptionsPage
-from doctorWorkField import DoctorWorkFieldPage
-from doctorMedicalHistory import DoctorMedicalHistoryPage
+import doctorAppointment
+import doctorProfile
+import doctorPrescription
+import doctorWorkField
+import doctorMedicalHistory
 
 
 
@@ -95,23 +95,23 @@ class DoctorMainPage:
 
         def getappointment():
             self.app.destroy()
-            manager = AppointmentManager(self.doctorid)
+            manager = doctorAppointment.AppointmentManager(self.doctorid)
             manager.run()
         def getprescription():
             self.app.destroy()
-            manager = DoctorPrescriptionsPage(self.doctorid)
+            manager = doctorPrescription.DoctorPrescriptionsPage(self.doctorid)
             manager.run()
         def getworkfield():
             self.app.destroy()
-            manager = DoctorWorkFieldPage(self.doctorid)
+            manager = doctorWorkField.DoctorWorkFieldPage(self.doctorid)
             manager.run()
         def getdoctorprofile():
             self.app.destroy()
-            manager = DoctorProfileMainPage(self.doctorid)
+            manager = doctorProfile.DoctorProfileMainPage(self.doctorid)
             manager.run()
         def getmedicalhistory():
             self.app.destroy()
-            manager = DoctorMedicalHistoryPage(self.doctorid)
+            manager = doctorMedicalHistory.DoctorMedicalHistoryPage(self.doctorid)
             manager.run()
 
 

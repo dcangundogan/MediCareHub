@@ -2,7 +2,7 @@ import customtkinter as ctk
 from tkinter import messagebox, ttk
 import mysql.connector
 from PIL import Image
-
+import doctorMain
 class DoctorWorkFieldPage:
     def __init__(self, doctor_id):
         self.doctor_id = doctor_id
@@ -36,20 +36,23 @@ class DoctorWorkFieldPage:
 
 
         userLabel = ctk.CTkLabel(master=frame, text="", image=imgUsericon, bg_color="#ffffff")
-        userLabel.image = imgUsericon  # Keep a reference!
-        userLabel.place(x=180, y=10)  # Adjust placement
+        userLabel.image = imgUsericon
+        userLabel.place(x=180, y=10)
 
 
         self.display_work_field_info(frame)
 
 
         edit_button = ctk.CTkButton(master=frame, text="Edit Work Field", command=self.edit_work_field)
-        edit_button.place(x=200, y=500)  # Adjust placement
+        edit_button.place(x=200, y=500)
+
+
+        back_button = ctk.CTkButton(master=frame, text="Back", command=self.go_back)
+        back_button.place(x=200, y=550)
 
         self.app.mainloop()
 
     def display_work_field_info(self, frame):
-
         try:
             cursor = self.mydb.cursor()
             query = """
@@ -64,9 +67,9 @@ class DoctorWorkFieldPage:
             if result:
                 labels = ['First Name:', 'Last Name:', 'Current Department:']
                 for index, (label, value) in enumerate(zip(labels, result)):
-                    if value is not None:  # Check if the value is not None
+                    if value is not None:
                         info_label = ctk.CTkLabel(master=frame, text=f"{label} {value}", font=("Arial", 12), text_color="#000000")
-                        info_label.place(x=20, y=150 + 30 * index)  # Adjust placement
+                        info_label.place(x=20, y=150 + 30 * index)
 
         except mysql.connector.Error as error:
             print("Failed to read data from MySQL table:", error)
@@ -79,9 +82,7 @@ class DoctorWorkFieldPage:
         edit_window.title("Edit Work Field")
         edit_window.geometry("400x300")
 
-
         departments = self.fetch_departments()
-
 
         row_frame = ctk.CTkFrame(edit_window)
         row_frame.pack(fill='x', padx=20, pady=20)
@@ -120,9 +121,13 @@ class DoctorWorkFieldPage:
                 self.mydb.autocommit = True
                 cursor.close()
 
-        # Save button
+
         save_button = ctk.CTkButton(edit_window, text="Save Changes", command=save_new_department)
         save_button.pack(pady=20)
+
+
+        back_button = ctk.CTkButton(edit_window, text="Back", command=edit_window.destroy)
+        back_button.pack(pady=10)
 
     def fetch_departments(self):
         try:
@@ -134,7 +139,11 @@ class DoctorWorkFieldPage:
         except mysql.connector.Error as error:
             messagebox.showerror("Database Error", f"An error occurred: {error}")
             return []
+
+    def go_back(self):
+        self.app.destroy()
+        doctor_main_page = doctorMain.DoctorMainPage(self.doctor_id)
+        doctor_main_page.run()
+
     def run(self):
         self.app.mainloop()
-
-
