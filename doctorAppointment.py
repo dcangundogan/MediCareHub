@@ -4,6 +4,7 @@ from tkcalendar import Calendar
 from datetime import datetime, timedelta
 import mysql.connector
 from CTkMessagebox import CTkMessagebox
+import doctorMain
 
 
 class AppointmentManager:
@@ -157,6 +158,15 @@ class AppointmentManager:
                                       command=self.submit_new_appointment)
         submit_button.pack(pady=10)
 
+        back_button = ctk.CTkButton(form_window, text="Back", font=("Arial Bold", 16),
+                                    command=form_window.destroy)
+        back_button.pack(pady=10)
+
+    def go_back_to_main_page(self):
+        self.app.destroy()
+        doctor_main_page = doctorMain.DoctorMainPage(self.doctor_id)
+        doctor_main_page.run()
+
     def initialize_ui(self):
         tab_view = ctk.CTkTabview(self.app)
         tab_view.pack(expand=True, fill="both", padx=20, pady=20)
@@ -179,9 +189,10 @@ class AppointmentManager:
                                                command=self.open_new_appointment_form)
         new_appointment_button.pack(pady=10)
 
+        back_button = ctk.CTkButton(tab1, text="Back", font=("Arial Bold", 16),
+                                    command=self.go_back_to_main_page)
+        back_button.pack(pady=10)
+
     def run(self):
         self.app.mainloop()
-
-
-# Usage example
 

@@ -5,6 +5,7 @@ from tkinter import ttk
 import mysql.connector
 from CTkMessagebox import CTkMessagebox
 from PIL import Image
+import doctorMain
 
 class DoctorMedicalHistoryPage:
     def __init__(self, doctor_id):
@@ -17,7 +18,7 @@ class DoctorMedicalHistoryPage:
         )
 
         self.app = CTk()
-        self.app.geometry("1200x860")
+        self.app.geometry("1200x880")
         self.app.title("Medical History")
         self.app.resizable(False, False)
 
@@ -73,6 +74,10 @@ class DoctorMedicalHistoryPage:
         # Submit Button
         submit_button = CTkButton(master=right_frame, text="Submit", command=self.submit_medical_history, fg_color="#1C2833", text_color="#F2F3F4", hover_color="#1A5276")
         submit_button.pack(pady=20)
+
+        # Back Button
+        back_button = CTkButton(master=right_frame, text="Back", command=self.go_back_to_main_page, fg_color="#1C2833", text_color="#F2F3F4", hover_color="#1A5276")
+        back_button.pack(pady=10)
 
         # Fetch and display appointments
         self.fetch_appointments()
@@ -165,8 +170,10 @@ class DoctorMedicalHistoryPage:
         except Exception as e:
             CTkMessagebox(title="Error", message=f"An error occurred: {e}", icon="cancel")
 
+    def go_back_to_main_page(self):
+        self.app.destroy()
+        doctor_main_page = doctorMain.DoctorMainPage(self.doctor_id)
+        doctor_main_page.run()
+
     def run(self):
         self.app.mainloop()
-
-
-

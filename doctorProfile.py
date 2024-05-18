@@ -1,7 +1,8 @@
 import customtkinter as ctk
 from PIL import Image
 import mysql.connector
-from doctorEditProfile import EditDoctorProfilePage
+import doctorEditProfile
+import doctorMain
 
 class DoctorProfileMainPage:
     def __init__(self, doctor_id):
@@ -14,42 +15,46 @@ class DoctorProfileMainPage:
         )
 
         self.app = ctk.CTk()
-        self.app.geometry("800x600")
+        self.app.geometry("800x800")
         self.app.title("Doctor Profile")
         self.app.resizable(False, False)
 
-        # Load images and convert them to CTkImage for customtkinter compatibility
+
         imgLogo = Image.open("images/logo.png").resize((300, 300))
         imgLogoicon = ctk.CTkImage(dark_image=imgLogo, light_image=imgLogo, size=(300, 300))
         userLogo = Image.open("images/medical-team.png").resize((120, 120))
         imgUsericon = ctk.CTkImage(dark_image=userLogo, light_image=userLogo, size=(120, 120))
 
-        # Logo at the top left
+
         logoLabel = ctk.CTkLabel(master=self.app, text="", image=imgLogoicon)
         logoLabel.image = imgLogoicon  # Keep a reference!
         logoLabel.pack(side="left", fill="y")
 
-        # Main Frame for content
+
         frame = ctk.CTkFrame(master=self.app, width=500, height=600, fg_color="#ffffff")
         frame.pack_propagate(0)
         frame.pack(side="right", fill="both", expand=True)
 
-        # User icon
-        userLabel = ctk.CTkLabel(master=frame, text="", image=imgUsericon, bg_color="#ffffff")
-        userLabel.image = imgUsericon  # Keep a reference!
-        userLabel.place(x=180, y=10)  # Adjust placement
 
-        # Display doctor information
+        userLabel = ctk.CTkLabel(master=frame, text="", image=imgUsericon, bg_color="#ffffff")
+        userLabel.image = imgUsericon
+        userLabel.place(x=180, y=10)
+
+
         self.display_doctor_info(frame)
 
         # Edit Profile Button
         edit_button = ctk.CTkButton(master=frame, text="Edit Profile", command=self.edit_profile)
         edit_button.place(x=200, y=500)  # Adjust placement
 
+        # Back Button
+        back_button = ctk.CTkButton(master=frame, text="Back", command=self.go_back, fg_color="#1C2833", text_color="#F2F3F4", hover_color="#1A5276")
+        back_button.place(x=200, y=600)  # Adjust placement
+
         self.app.mainloop()
 
     def display_doctor_info(self, frame):
-        # Fetch and display extended doctor information
+
         try:
             cursor = self.mydb.cursor()
             query = """
@@ -75,12 +80,14 @@ class DoctorProfileMainPage:
                 cursor.close()
 
     def edit_profile(self):
-        EditDoctorProfilePage(self.doctor_id, self.mydb)
+        doctorEditProfile.EditDoctorProfilePage(self.doctor_id, self.mydb)
+
+    def go_back(self):
+        self.app.destroy()
+        doctor_main_page = doctorMain.DoctorMainPage(self.doctor_id)
+        doctor_main_page.run()
 
     def run(self):
         self.app.mainloop()
 
-# Usage example
-if __name__ == "__main__":
-    doctor_id = 1  # Replace with the actual doctor ID
-    DoctorProfileMainPage(doctor_id).run()
+
