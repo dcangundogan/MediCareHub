@@ -15,7 +15,7 @@ import patientLab
 
 
 class PatientMainPage:
-    ekran = "1200x1200"
+    ekran = "1200x1050"
     baslik = "Welcome"
 
     def __init__(self, patientid):
@@ -43,6 +43,8 @@ class PatientMainPage:
         sigortalogo = Image.open("images/healthcare.png")
         faturalogo = Image.open("images/bill.png")
         calışmaalanllogo = Image.open("images/surgery-room (2).png")
+        invoiceimage = Image.open("images/invoicedb.png")
+        resultimage = Image.open("images/resultdb.png")
 
         imgLogoicon = CTkImage(dark_image=imgLogo, light_image=imgLogo, size=(450, 1200))
 
@@ -56,6 +58,8 @@ class PatientMainPage:
         medikallogoIcon = CTkImage(dark_image=medikallogo, light_image=medikallogo, size=(40, 40))
         sigortalogoIcon = CTkImage(dark_image=sigortalogo, light_image=sigortalogo, size=(40, 40))
         faturalogoIcon = CTkImage(dark_image=faturalogo, light_image=faturalogo, size=(40, 40))
+        invoiceIcon = CTkImage(dark_image=invoiceimage, light_image=invoiceimage, size=(40, 40))
+        resultIcon = CTkImage(dark_image=resultimage, light_image=resultimage, size=(40, 40))
         calışmaalanllogoıcon = CTkImage(dark_image=calışmaalanllogo, light_image=calışmaalanllogo, size=(40, 40))
 
         logoLabel = CTkLabel(master=self.app, text="", image=imgLogoicon).pack(expand=True, side="left")
@@ -131,10 +135,10 @@ class PatientMainPage:
 
         InvoiceButton = CTkButton(master=frame, text="Show Invoice ", fg_color="#EEEEEE", command=getpatientInvoice,
                                   hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
-                                  height=90, image=ıdlogoIcon).pack(anchor="w", pady=(30, 0), padx=(375, 0))
+                                  height=90, image=invoiceIcon).pack(anchor="w", pady=(30, 0), padx=(375, 0))
         resultButton=CTkButton(master=frame, text="Results", fg_color="#EEEEEE", command=getpatientresult,
                                   hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
-                                  height=90, image=ıdlogoIcon).pack(anchor="w", pady=(30, 0), padx=(45, 0))
+                                  height=90, image=resultIcon).pack(anchor="w", pady=(30, 0), padx=(45, 0))
         self.app.mainloop()
 
     def get_patient_name(self, patientid):
