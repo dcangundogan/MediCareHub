@@ -5,14 +5,17 @@ from customtkinter import *
 from PIL import Image
 import mysql.connector
 from CTkMessagebox import CTkMessagebox
-from patientAppointment import AppointmentManager
-from patientsPrescription import PrescriptionsPage
-from patientsHistory import MedicalHistoryPage
-from patientProfile import ProfileMainPage
-from patientInsurance import InsuranceInfoPage
+import patientsPrescription
+import patientsHistory
+import patientProfile
+import patientInsurance
+import patientAppointment
+import patientInvoice
+import patientLab
+
 
 class PatientMainPage:
-    ekran = "1200x800"
+    ekran = "1200x1200"
     baslik = "Welcome"
 
     def __init__(self, patientid):
@@ -31,18 +34,9 @@ class PatientMainPage:
         self.app.resizable(False, False)
 
         imgLogo = Image.open("images/logo.png")
-        google_icon_data = Image.open("images/google-icon.png")
         imgUser = Image.open("images/man.png")
-        imgPassword = Image.open("images/password-icon.png")
-        patientLogo = Image.open("images/patient.png")
-        doctorLogo = Image.open("images/doctor.png")
-        adminlogo = Image.open("images/admin.png")
+
         ıdlogo = Image.open("images/id.png")
-        namelogo = Image.open("images/id-card.png")
-        maillogo = Image.open("images/mail.png")
-        genderlogo = Image.open("images/symbol.png")
-        bloodlogo = Image.open("images/blood-analysis.png")
-        addresslogo = Image.open("images/location-pin.png")
         randevuimage = Image.open("images/appointment.png")
         recetelogo = Image.open("images/prescription.png")
         medikallogo = Image.open("images/insurance.png")
@@ -50,30 +44,23 @@ class PatientMainPage:
         faturalogo = Image.open("images/bill.png")
         calışmaalanllogo = Image.open("images/surgery-room (2).png")
 
-        imgRandevu = CTkImage(dark_image=randevuimage, light_image=randevuimage, size=(40, 40))
-        imgLogoicon = CTkImage(dark_image=imgLogo, light_image=imgLogo, size=(450, 950))
-        imgpatient = CTkImage(dark_image=patientLogo, light_image=patientLogo, size=(20, 20))
-        imgdoctor = CTkImage(dark_image=doctorLogo, light_image=doctorLogo, size=(20, 20))
-        imgadmin = CTkImage(dark_image=doctorLogo, light_image=doctorLogo, size=(20, 20))
-        google_icon = CTkImage(dark_image=google_icon_data, light_image=google_icon_data, size=(17, 17))
+        imgLogoicon = CTkImage(dark_image=imgLogo, light_image=imgLogo, size=(450, 1200))
+
+
         userIcon = CTkImage(dark_image=imgUser, light_image=imgUser, size=(22, 22))
-        passwordIcon = CTkImage(dark_image=imgPassword, light_image=imgPassword, size=(22, 22))
+
         ıdlogoIcon = CTkImage(dark_image=ıdlogo, light_image=ıdlogo, size=(50, 50))
-        namelogoIcon = CTkImage(dark_image=namelogo, light_image=namelogo, size=(22, 22))
-        maillogoIcon = CTkImage(dark_image=maillogo, light_image=maillogo, size=(22, 22))
-        genderlogoIcon = CTkImage(dark_image=genderlogo, light_image=genderlogo, size=(22, 22))
-        bloodlogoIcon = CTkImage(dark_image=bloodlogo, light_image=bloodlogo, size=(22, 22))
-        addresslogoIcon = CTkImage(dark_image=addresslogo, light_image=addresslogo, size=(22, 22))
-        randevuimageIcon = CTkImage(dark_image=randevuimage, light_image=randevuimage, size=(50, 50))
-        recetelogoIcon = CTkImage(dark_image=recetelogo, light_image=recetelogo, size=(50, 50))
-        medikallogoIcon = CTkImage(dark_image=medikallogo, light_image=medikallogo, size=(40, 50))
-        sigortalogoIcon = CTkImage(dark_image=sigortalogo, light_image=sigortalogo, size=(50, 50))
-        faturalogoIcon = CTkImage(dark_image=faturalogo, light_image=faturalogo, size=(50, 50))
-        calışmaalanllogoıcon = CTkImage(dark_image=calışmaalanllogo, light_image=calışmaalanllogo, size=(50, 50))
+
+        randevuimageIcon = CTkImage(dark_image=randevuimage, light_image=randevuimage, size=(40, 40))
+        recetelogoIcon = CTkImage(dark_image=recetelogo, light_image=recetelogo, size=(40, 40))
+        medikallogoIcon = CTkImage(dark_image=medikallogo, light_image=medikallogo, size=(40, 40))
+        sigortalogoIcon = CTkImage(dark_image=sigortalogo, light_image=sigortalogo, size=(40, 40))
+        faturalogoIcon = CTkImage(dark_image=faturalogo, light_image=faturalogo, size=(40, 40))
+        calışmaalanllogoıcon = CTkImage(dark_image=calışmaalanllogo, light_image=calışmaalanllogo, size=(40, 40))
 
         logoLabel = CTkLabel(master=self.app, text="", image=imgLogoicon).pack(expand=True, side="left")
 
-        frame = CTkFrame(master=self.app, width=750, height=950, fg_color="#ffffff")
+        frame = CTkFrame(master=self.app, width=900, height=1200, fg_color="#ffffff")
         frame.pack_propagate(0)
         frame.pack(expand=True, side="right")
 
@@ -95,23 +82,31 @@ class PatientMainPage:
 
         def getappointment():
             self.app.destroy()
-            manager = AppointmentManager(self.patientid)
+            manager = patientAppointment.AppointmentManager(self.patientid)
             manager.run()
         def getprescription():
             self.app.destroy()
-            manager = PrescriptionsPage(self.patientid)
+            manager = patientsPrescription.PrescriptionsPage(self.patientid)
             manager.run()
         def getmedicalhistory():
             self.app.destroy()
-            manager = MedicalHistoryPage(self.patientid)
+            manager = patientsHistory.MedicalHistoryPage(self.patientid)
             manager.run()
         def getpatientprofile():
             self.app.destroy()
-            manager = ProfileMainPage(self.patientid)
+            manager = -patientProfile.ProfileMainPage(self.patientid)
             manager.run()
         def getpatientinsurance():
             self.app.destroy()
-            manager = InsuranceInfoPage(self.patientid, self.mydb, self.run)
+            manager = patientInsurance.InsuranceInfoPage(self.patientid)
+            manager.run()
+        def getpatientInvoice():
+            self.app.destroy()
+            manager= patientInvoice.InvoicePage(self.patientid)
+            manager.run()
+        def getpatientresult():
+            self.app.destroy()
+            manager = patientLab.LabPage(self.patientid)
             manager.run()
 
         randevuButton = CTkButton(master=frame, text="Appointment", fg_color="#EEEEEE", command=getappointment,
@@ -133,6 +128,13 @@ class PatientMainPage:
         profileButton = CTkButton(master=frame, text="Profile ", fg_color="#EEEEEE", command=getpatientprofile,
                                  hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
                                  height=90, image=ıdlogoIcon).pack(anchor="w", pady=(30, 0), padx=(45, 0))
+
+        InvoiceButton = CTkButton(master=frame, text="Show Invoice ", fg_color="#EEEEEE", command=getpatientInvoice,
+                                  hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
+                                  height=90, image=ıdlogoIcon).pack(anchor="w", pady=(30, 0), padx=(375, 0))
+        resultButton=CTkButton(master=frame, text="Results", fg_color="#EEEEEE", command=getpatientresult,
+                                  hover_color="#08e590", font=("Arial Bold", 36), text_color="#601E88", width=325,
+                                  height=90, image=ıdlogoIcon).pack(anchor="w", pady=(30, 0), padx=(45, 0))
         self.app.mainloop()
 
     def get_patient_name(self, patientid):
@@ -152,12 +154,4 @@ class PatientMainPage:
     def run(self):
         self.app.mainloop()
 
-if __name__ == "__main__":
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="bercan2003",
-        database="MediCareHub"
-    )
-    pg = PatientMainPage(1)
-    pg.run()
+

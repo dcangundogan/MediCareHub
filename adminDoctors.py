@@ -281,7 +281,4 @@ class AdminDoctorPage:
         self.app.mainloop()
 
 
-# Usage example
-if __name__ == "__main__":
-    app = AdminDoctorPage()
-    app.run()
+

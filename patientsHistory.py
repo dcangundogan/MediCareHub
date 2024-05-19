@@ -5,15 +5,14 @@ from tkinter import ttk
 import mysql.connector
 from CTkMessagebox import CTkMessagebox
 from PIL import Image
+import patientMain  # Ensure this import is correct
 
-
-
-class MedicalHistoryPage():
-    def __init__(self,patientid):
+class MedicalHistoryPage:
+    def __init__(self, patientid):
         self.patientid = patientid
-        self.app=CTk()
+        self.app = CTk()
         self.app.title('Patients History')
-        self.app.resizable(False,False)
+        self.app.resizable(False, False)
         self.app.geometry('900x600')
         self.mydb = mysql.connector.connect(
             host="localhost",
@@ -22,10 +21,6 @@ class MedicalHistoryPage():
             database="MediCareHub",
         )
         self.uihistory()
-
-
-
-
 
     def uihistory(self):
         main_frame = CTkFrame(master=self.app)
@@ -46,7 +41,7 @@ class MedicalHistoryPage():
         right_frame.pack_propagate(0)
         right_frame.pack(side=LEFT, fill=BOTH, expand=True, padx=20, pady=20)
 
-        label = CTkLabel(master=right_frame, text="Medical History", font=("Arial Bold", 20),text_color="#000000")
+        label = CTkLabel(master=right_frame, text="Medical History", font=("Arial Bold", 20), text_color="#000000")
         label.pack(pady=10)
 
         columns = ("Record_ID", "Pre_Conditions")
@@ -65,6 +60,10 @@ class MedicalHistoryPage():
         style.configure("mystyle.Treeview", highlightthickness=0, bd=0, font=('Arial', 12))
         style.configure("mystyle.Treeview.Heading", font=('Arial Bold', 14))
         style.layout("mystyle.Treeview", [('mystyle.Treeview.treearea', {'sticky': 'nswe'})])
+
+        # Back Button
+        back_button = CTkButton(master=right_frame, text="Back", command=self.go_back_to_main_page)
+        back_button.pack(pady=10)
 
     def fetch_medical_history(self):
         try:
@@ -87,17 +86,12 @@ class MedicalHistoryPage():
             cursor.close()
         except mysql.connector.Error as e:
             CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
+
+    def go_back_to_main_page(self):
+        self.app.destroy()
+        patient_main_page = patientMain.PatientMainPage(self.patientid)
+        patient_main_page.run()
+
     def run(self):
         self.app.mainloop()
-
-
-
-
-
-
-
-
-
-
-
 

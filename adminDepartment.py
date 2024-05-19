@@ -34,6 +34,18 @@ class AdminDepartmentPage:
         logoLabel = ctk.CTkLabel(master=left_frame, text="", image=imgLogoicon)
         logoLabel.pack(pady=20)
 
+        # Navigation Buttons
+        nav_buttons = [
+            ("View Departments", self.view_departments),
+            ("Edit Department", self.open_edit_department_form),
+            ("Add New Department", self.open_new_department_form),
+            ("Delete Department", self.delete_department),
+        ]
+
+        for text, command in nav_buttons:
+            button = ctk.CTkButton(master=left_frame, text=text, command=command, fg_color="#EEEEEE", hover_color="#08e590", font=("Arial Bold", 18), text_color="#601E88", width=200, height=50)
+            button.pack(pady=10)
+
         # Main Content Frame
         self.right_frame = ctk.CTkFrame(master=main_frame, fg_color="#F2F3F4")
         self.right_frame.pack_propagate(0)
@@ -60,8 +72,6 @@ class AdminDepartmentPage:
         self.tree.pack(expand=True, fill=BOTH, padx=10, pady=10)
         self.fetch_departments()
 
-        self.create_department_buttons()
-
     def fetch_departments(self):
         try:
             cursor = self.mydb.cursor()
@@ -84,52 +94,107 @@ class AdminDepartmentPage:
         except mysql.connector.Error as e:
             CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
 
-    def create_department_buttons(self):
-        button_frame = ctk.CTkFrame(self.right_frame, fg_color="#F2F3F4")
-        button_frame.pack(fill=X, padx=10, pady=10)
+    def open_edit_department_form(self):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            CTkMessagebox(title="Selection Error", message="Please select a department to edit.", icon="cancel")
+            return
 
-        add_button = ctk.CTkButton(master=button_frame, text="Add Department", command=self.add_department_form, fg_color="#4CAF50", hover_color="#388E3C", font=("Arial Bold", 14))
-        add_button.pack(side=LEFT, padx=10)
+        dept_id = self.tree.item(selected_item, 'values')[0]
 
-        edit_button = ctk.CTkButton(master=button_frame, text="Edit Department", command=self.edit_department_form, fg_color="#FFC107", hover_color="#FFA000", font=("Arial Bold", 14))
-        edit_button.pack(side=LEFT, padx=10)
+        form_window = ctk.CTkToplevel(self.app)
+        form_window.geometry("700x700")
+        form_window.title("Edit Department Form")
 
-        delete_button = ctk.CTkButton(master=button_frame, text="Delete Department", command=self.delete_department, fg_color="#F44336", hover_color="#D32F2F", font=("Arial Bold", 14))
-        delete_button.pack(side=LEFT, padx=10)
-
-    def add_department_form(self):
-        self.clear_right_frame()
-
-        form_frame = ctk.CTkFrame(master=self.right_frame, fg_color="#F2F3F4")
-        form_frame.pack(fill=BOTH, expand=True, padx=20, pady=20)
-
-        label = ctk.CTkLabel(master=form_frame, text="Add Department", font=("Arial Bold", 24), text_color="#1C2833")
+        label = ctk.CTkLabel(form_window, text="Edit Department", font=("Arial Bold", 20), text_color="#1C2833")
         label.pack(pady=10)
 
-        form_labels = ["Department Head", "Department Name", "Employee Count"]
-        self.form_entries = {}
+        # Fetching existing department details
+        cursor = self.mydb.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM department WHERE Dept_ID = %s", (dept_id,))
+        department = cursor.fetchone()
+        cursor.close()
 
-        for label_text in form_labels:
-            row_frame = ctk.CTkFrame(master=form_frame, fg_color="#F2F3F4")
-            row_frame.pack(fill=X, pady=5)
+        # Department Head
+        head_label = ctk.CTkLabel(form_window, text="Department Head:", font=("Arial Bold", 16), text_color="#1C2833")
+        head_label.pack(pady=10)
+        self.head_entry = ctk.CTkEntry(form_window, width=300)
+        self.head_entry.insert(0, department['Dept_Head'])
+        self.head_entry.pack(pady=5)
 
-            label = ctk.CTkLabel(master=row_frame, text=label_text, font=("Arial", 14), text_color="#1C2833")
-            label.pack(side=LEFT, padx=5)
+        # Department Name
+        name_label = ctk.CTkLabel(form_window, text="Department Name:", font=("Arial Bold", 16), text_color="#1C2833")
+        name_label.pack(pady=10)
+        self.name_entry = ctk.CTkEntry(form_window, width=300)
+        self.name_entry.insert(0, department['Dept_Name'])
+        self.name_entry.pack(pady=5)
 
-            entry = ctk.CTkEntry(master=row_frame, width=300)
-            entry.pack(side=LEFT, padx=5)
-            self.form_entries[label_text] = entry
+        # Employee Count
+        emp_count_label = ctk.CTkLabel(form_window, text="Employee Count:", font=("Arial Bold", 16), text_color="#1C2833")
+        emp_count_label.pack(pady=10)
+        self.emp_count_entry = ctk.CTkEntry(form_window, width=300)
+        self.emp_count_entry.insert(0, department['Emp_Count'])
+        self.emp_count_entry.pack(pady=5)
 
-        submit_button = ctk.CTkButton(master=form_frame, text="Submit", command=self.submit_new_department, fg_color="#4CAF50", hover_color="#388E3C", font=("Arial Bold", 14))
-        submit_button.pack(pady=10)
+        # Save Button
+        save_button = ctk.CTkButton(form_window, text="Save Changes", command=lambda: self.save_department_changes(dept_id, form_window), fg_color="#1C2833", text_color="#F2F3F4", hover_color="#1A5276")
+        save_button.pack(pady=20)
 
-        back_button = ctk.CTkButton(master=form_frame, text="Back", command=self.view_departments, fg_color="#607D8B", hover_color="#455A64", font=("Arial Bold", 14))
-        back_button.pack(pady=10)
+    def open_new_department_form(self):
+        form_window = ctk.CTkToplevel(self.app)
+        form_window.geometry("650x650")
+        form_window.title("New Department Form")
 
-    def submit_new_department(self):
-        dept_head = self.form_entries["Department Head"].get()
-        dept_name = self.form_entries["Department Name"].get()
-        emp_count = self.form_entries["Employee Count"].get()
+        label = ctk.CTkLabel(form_window, text="New Department", font=("Arial Bold", 20), text_color="#1C2833")
+        label.pack(pady=10)
+
+        # Department Head
+        head_label = ctk.CTkLabel(form_window, text="Department Head:", font=("Arial Bold", 16), text_color="#1C2833")
+        head_label.pack(pady=10)
+        self.head_entry = ctk.CTkEntry(form_window, width=300)
+        self.head_entry.pack(pady=5)
+
+        # Department Name
+        name_label = ctk.CTkLabel(form_window, text="Department Name:", font=("Arial Bold", 16), text_color="#1C2833")
+        name_label.pack(pady=10)
+        self.name_entry = ctk.CTkEntry(form_window, width=300)
+        self.name_entry.pack(pady=5)
+
+        # Employee Count
+        emp_count_label = ctk.CTkLabel(form_window, text="Employee Count:", font=("Arial Bold", 16), text_color="#1C2833")
+        emp_count_label.pack(pady=10)
+        self.emp_count_entry = ctk.CTkEntry(form_window, width=300)
+        self.emp_count_entry.pack(pady=5)
+
+        # Save Button
+        save_button = ctk.CTkButton(form_window, text="Add Department", command=lambda: self.add_new_department(form_window), fg_color="#1C2833", text_color="#F2F3F4", hover_color="#1A5276")
+        save_button.pack(pady=20)
+
+    def save_department_changes(self, dept_id, form_window):
+        dept_head = self.head_entry.get()
+        dept_name = self.name_entry.get()
+        emp_count = self.emp_count_entry.get()
+
+        query = """
+            UPDATE department 
+            SET Dept_Head = %s, Dept_Name = %s, Emp_Count = %s
+            WHERE Dept_ID = %s
+        """
+        try:
+            cursor = self.mydb.cursor()
+            cursor.execute(query, (dept_head, dept_name, emp_count, dept_id))
+            self.mydb.commit()
+            cursor.close()
+            CTkMessagebox(title="Success", message="Department updated successfully.", icon="check")
+            form_window.destroy()
+            self.view_departments()
+        except mysql.connector.Error as e:
+            CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
+
+    def add_new_department(self, form_window):
+        dept_head = self.head_entry.get()
+        dept_name = self.name_entry.get()
+        emp_count = self.emp_count_entry.get()
 
         dept_id = self.generate_unique_dept_id()
 
@@ -143,62 +208,7 @@ class AdminDepartmentPage:
             self.mydb.commit()
             cursor.close()
             CTkMessagebox(title="Success", message="New department added successfully.", icon="check")
-            self.view_departments()
-        except mysql.connector.Error as e:
-            CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
-
-    def edit_department_form(self):
-        selected_item = self.tree.selection()
-        if not selected_item:
-            CTkMessagebox(title="Selection Error", message="Please select a department to edit.", icon="cancel")
-            return
-
-        dept_values = self.tree.item(selected_item, 'values')
-        self.clear_right_frame()
-
-        form_frame = ctk.CTkFrame(master=self.right_frame, fg_color="#F2F3F4")
-        form_frame.pack(fill=BOTH, expand=True, padx=20, pady=20)
-
-        label = ctk.CTkLabel(master=form_frame, text="Edit Department", font=("Arial Bold", 24), text_color="#1C2833")
-        label.pack(pady=10)
-
-        form_labels = ["Department Head", "Department Name", "Employee Count"]
-        self.form_entries = {}
-
-        for i, label_text in enumerate(form_labels):
-            row_frame = ctk.CTkFrame(master=form_frame, fg_color="#F2F3F4")
-            row_frame.pack(fill=X, pady=5)
-
-            label = ctk.CTkLabel(master=row_frame, text=label_text, font=("Arial", 14), text_color="#1C2833")
-            label.pack(side=LEFT, padx=5)
-
-            entry = ctk.CTkEntry(master=row_frame, width=300)
-            entry.insert(0, dept_values[i+1])
-            entry.pack(side=LEFT, padx=5)
-            self.form_entries[label_text] = entry
-
-        submit_button = ctk.CTkButton(master=form_frame, text="Submit", command=lambda: self.submit_edit_department(dept_values[0]), fg_color="#FFC107", hover_color="#FFA000", font=("Arial Bold", 14))
-        submit_button.pack(pady=10)
-
-        back_button = ctk.CTkButton(master=form_frame, text="Back", command=self.view_departments, fg_color="#607D8B", hover_color="#455A64", font=("Arial Bold", 14))
-        back_button.pack(pady=10)
-
-    def submit_edit_department(self, dept_id):
-        dept_head = self.form_entries["Department Head"].get()
-        dept_name = self.form_entries["Department Name"].get()
-        emp_count = self.form_entries["Employee Count"].get()
-
-        query = """
-            UPDATE department
-            SET Dept_Head = %s, Dept_Name = %s, Emp_Count = %s
-            WHERE Dept_ID = %s
-        """
-        try:
-            cursor = self.mydb.cursor()
-            cursor.execute(query, (dept_head, dept_name, emp_count, dept_id))
-            self.mydb.commit()
-            cursor.close()
-            CTkMessagebox(title="Success", message="Department updated successfully.", icon="check")
+            form_window.destroy()
             self.view_departments()
         except mysql.connector.Error as e:
             CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
@@ -210,10 +220,10 @@ class AdminDepartmentPage:
             return
 
         dept_id = self.tree.item(selected_item, 'values')[0]
-        cursor = self.mydb.cursor()
 
         query = "DELETE FROM department WHERE Dept_ID = %s"
         try:
+            cursor = self.mydb.cursor()
             cursor.execute(query, (dept_id,))
             self.mydb.commit()
             cursor.close()
@@ -237,3 +247,7 @@ class AdminDepartmentPage:
         self.app.mainloop()
 
 
+# Usage example
+if __name__ == "__main__":
+    app = AdminDepartmentPage()
+    app.run()

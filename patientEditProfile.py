@@ -3,9 +3,15 @@ from tkinter import messagebox
 import mysql.connector
 
 class EditProfilePage:
-    def __init__(self, patient_id, mydb):
+    def __init__(self, patient_id):
+        self.mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="bercan2003",
+            database="MediCareHub",
+        )
         self.patient_id = patient_id
-        self.mydb = mydb
+
 
         self.edit_window = ctk.CTkToplevel()
         self.edit_window.title("Edit Patient Profile")
