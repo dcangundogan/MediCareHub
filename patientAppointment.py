@@ -4,7 +4,7 @@ from tkcalendar import Calendar
 from datetime import datetime, timedelta
 import mysql.connector
 from CTkMessagebox import CTkMessagebox
-
+import patientMain  # Ensure this import is correct
 
 class AppointmentManager:
     def __init__(self, patient_id):
@@ -38,11 +38,15 @@ class AppointmentManager:
         return time_slots
 
     def check_patient_exists(self):
-        cursor = self.mydb.cursor()
-        cursor.execute("SELECT COUNT(*) FROM patient WHERE Patient_ID = %s", (self.patient_id,))
-        count = cursor.fetchone()[0]
-        cursor.close()
-        return count > 0
+        try:
+            cursor = self.mydb.cursor()
+            cursor.execute("SELECT COUNT(*) FROM patient WHERE Patient_ID = %s", (self.patient_id,))
+            count = cursor.fetchone()[0]
+            cursor.close()
+            return count > 0
+        except mysql.connector.Error as e:
+            CTkMessagebox(title="Database Error", message=f"An error occurred while checking patient existence: {e}", icon="cancel")
+            return False
 
     def fetch_appointments_by_patient(self):
         if not self.check_patient_exists():
@@ -72,7 +76,7 @@ class AppointmentManager:
             cursor.close()
             return rows
         except mysql.connector.Error as e:
-            CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
+            CTkMessagebox(title="Database Error", message=f"An error occurred while fetching appointments: {e}", icon="cancel")
             return []
 
     def show_filtered_appointments(self):
@@ -108,10 +112,17 @@ class AppointmentManager:
             CTkMessagebox(title="Input Error", message="Please enter a valid Patient ID.", icon="cancel")
             return
 
-        cursor = self.mydb.cursor()
-        cursor.execute("SELECT Doctor_ID FROM doctor WHERE CONCAT(DoctorName, ' ', DoctorSurname) = %s", (doctor_name,))
-        doctor_id = cursor.fetchone()[0]
-        cursor.close()
+        try:
+            cursor = self.mydb.cursor()
+            cursor.execute("SELECT Doctor_ID FROM doctor WHERE CONCAT(DoctorName, ' ', DoctorSurname) = %s", (doctor_name,))
+            doctor_id = cursor.fetchone()[0]
+            cursor.close()
+        except mysql.connector.Error as e:
+            CTkMessagebox(title="Database Error", message=f"An error occurred while fetching doctor ID: {e}", icon="cancel")
+            return
+        except TypeError:
+            CTkMessagebox(title="Input Error", message="The selected doctor does not exist.", icon="cancel")
+            return
 
         query = """
         INSERT INTO appointment (Appointment_ID, Scheduled_On, Date, Time, Doctor_ID, Patient_ID)
@@ -124,7 +135,7 @@ class AppointmentManager:
             cursor.close()
             CTkMessagebox(title="Success", message="New appointment booked successfully.", icon="check")
         except mysql.connector.Error as e:
-            CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
+            CTkMessagebox(title="Database Error", message=f"An error occurred while inserting the appointment: {e}", icon="cancel")
         self.show_filtered_appointments()
 
     def open_new_appointment_form(self):
@@ -147,16 +158,26 @@ class AppointmentManager:
 
         new_appointment_doctor_label = ctk.CTkLabel(form_window, text="Doctor:", font=("Arial Bold", 16))
         new_appointment_doctor_label.pack(pady=10)
-        cursor = self.mydb.cursor()
-        cursor.execute("SELECT CONCAT(DoctorName, ' ', DoctorSurname) FROM doctor")
-        doctor_names = [row[0] for row in cursor.fetchall()]
-        cursor.close()
+        try:
+            cursor = self.mydb.cursor()
+            cursor.execute("SELECT CONCAT(DoctorName, ' ', DoctorSurname) FROM doctor")
+            doctor_names = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+        except mysql.connector.Error as e:
+            CTkMessagebox(title="Database Error", message=f"An error occurred while fetching doctor names: {e}", icon="cancel")
+            return
+
         self.new_appointment_doctor_combo = ttk.Combobox(form_window, values=doctor_names)
         self.new_appointment_doctor_combo.pack(pady=5)
 
         submit_button = ctk.CTkButton(form_window, text="Submit", font=("Arial Bold", 16),
                                       command=self.submit_new_appointment)
         submit_button.pack(pady=10)
+
+    def go_back_to_main_page(self):
+        self.app.destroy()
+        patient_main_page = patientMain.PatientMainPage(self.patient_id)
+        patient_main_page.run()
 
     def initialize_ui(self):
         tab_view = ctk.CTkTabview(self.app)
@@ -176,15 +197,13 @@ class AppointmentManager:
                                       command=self.show_filtered_appointments)
         filter_button.pack(pady=10)
 
-        new_appointment_button = ctk.CTkButton(tab1, text="New Appointment",font=("Arial Bold", 16), command=self.open_new_appointment_form)
+        new_appointment_button = ctk.CTkButton(tab1, text="New Appointment", font=("Arial Bold", 16), command=self.open_new_appointment_form)
         new_appointment_button.pack(pady=10)
+
+        back_button = ctk.CTkButton(tab1, text="Back", font=("Arial Bold", 16), command=self.go_back_to_main_page)
+        back_button.pack(pady=10)
 
     def run(self):
         self.app.mainloop()
 
 
-# Usage example
-if __name__ == "__main__":
-    patient_id = "1"  # Replace with the actual patient ID
-    manager = AppointmentManager(patient_id)
-    manager.run()

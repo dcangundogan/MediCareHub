@@ -2,6 +2,7 @@ import customtkinter as ctk
 from PIL import Image
 import mysql.connector
 from patientEditProfile import EditProfilePage
+import patientMain  # Ensure this import is correct
 
 class ProfileMainPage:
     def __init__(self, patient_id):
@@ -46,21 +47,25 @@ class ProfileMainPage:
         edit_button = ctk.CTkButton(master=frame, text="Edit Profile", command=self.edit_profile)
         edit_button.place(x=200, y=500)  # Adjust placement
 
+        # Back Button
+        back_button = ctk.CTkButton(master=frame, text="Back", command=self.go_back_to_main_page)
+        back_button.place(x=40, y=500)  # Adjust placement
+
         self.app.mainloop()
 
     def display_patient_info(self, frame):
         # Fetch and display extended patient information
         try:
             cursor = self.mydb.cursor()
-            query = "SELECT Patient_Fname, Patient_Lname, Phone, Email, Gender,  Address, Admisson_Date FROM Patient WHERE Patient_ID = %s"
+            query = "SELECT Patient_Fname, Patient_Lname, Phone, Email, Gender, Address, Admisson_Date FROM Patient WHERE Patient_ID = %s"
             cursor.execute(query, (self.patient_id,))
             result = cursor.fetchone()
 
             if result:
-                labels = ['First Name:', 'Last Name:', 'Phone:', 'Email:', 'Gender:',  'Address:','Admission Date:']
+                labels = ['First Name:', 'Last Name:', 'Phone:', 'Email:', 'Gender:', 'Address:', 'Admission Date:']
                 for index, (label, value) in enumerate(zip(labels, result)):
                     if value is not None:  # Check if the value is not None
-                        info_label = ctk.CTkLabel(master=frame, text=f"{label} {value}", font=("Arial", 12),text_color="#000000")
+                        info_label = ctk.CTkLabel(master=frame, text=f"{label} {value}", font=("Arial", 12), text_color="#000000")
                         info_label.place(x=20, y=150 + 30 * index)  # Adjust placement
 
         except mysql.connector.Error as error:
@@ -70,8 +75,12 @@ class ProfileMainPage:
                 cursor.close()
 
     def edit_profile(self):
-        EditProfilePage(self.patient_id,self.mydb)
+        EditProfilePage(self.patient_id)
 
+    def go_back_to_main_page(self):
+        self.app.destroy()
+        patient_main_page = patientMain.PatientMainPage(self.patient_id)
+        patient_main_page.run()
 
     def run(self):
         self.app.mainloop()

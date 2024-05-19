@@ -7,7 +7,8 @@ from CTkMessagebox import CTkMessagebox
 from PIL import Image
 from tkcalendar import DateEntry
 from datetime import datetime
-import doctorMain  # Make sure this import is correct
+import doctorMain  # Ensure this import is correct
+import random
 
 class DoctorPrescriptionsPage:
     def __init__(self, doctor_id):
@@ -49,27 +50,25 @@ class DoctorPrescriptionsPage:
         label.pack(pady=10)
 
         # Patient ID Entry
-        patient_id_label = CTkLabel(master=right_frame, text="Patient ID:", font=("Arial", 16),text_color="#000000")
+        patient_id_label = CTkLabel(master=right_frame, text="Patient ID:", font=("Arial", 16), text_color="#000000")
         patient_id_label.pack(pady=5)
-        self.patient_id_entry = CTkEntry(master=right_frame,fg_color="#EEEEEE",border_color="#261E76",border_width=2
-                         ,text_color="#000000")
+        self.patient_id_entry = CTkEntry(master=right_frame, fg_color="#EEEEEE", border_color="#261E76", border_width=2, text_color="#000000")
         self.patient_id_entry.pack(pady=5)
 
         # Medicine Combo Box
-        medicine_label = CTkLabel(master=right_frame, text="Select Medicine:", font=("Arial", 16),text_color="#000000")
+        medicine_label = CTkLabel(master=right_frame, text="Select Medicine:", font=("Arial", 16), text_color="#000000")
         medicine_label.pack(pady=5)
         self.medicine_combo = ttk.Combobox(master=right_frame)
         self.medicine_combo.pack(pady=5)
 
         # Dosage Entry
-        dosage_label = CTkLabel(master=right_frame, text="Dosage:", font=("Arial", 16),text_color="#000000")
+        dosage_label = CTkLabel(master=right_frame, text="Dosage:", font=("Arial", 16), text_color="#000000")
         dosage_label.pack(pady=5)
-        self.dosage_entry = CTkEntry(master=right_frame,fg_color="#EEEEEE",border_color="#261E76",border_width=2
-                         ,text_color="#000000")
+        self.dosage_entry = CTkEntry(master=right_frame, fg_color="#EEEEEE", border_color="#261E76", border_width=2, text_color="#000000")
         self.dosage_entry.pack(pady=5)
 
         # Date Entry
-        date_label = CTkLabel(master=right_frame, text="Date:", font=("Arial", 16),text_color="#000000")
+        date_label = CTkLabel(master=right_frame, text="Date:", font=("Arial", 16), text_color="#000000")
         date_label.pack(pady=5)
         self.date_entry = DateEntry(master=right_frame, date_pattern='yyyy-mm-dd')
         self.date_entry.pack(pady=5)
@@ -95,6 +94,16 @@ class DoctorPrescriptionsPage:
         except mysql.connector.Error as e:
             CTkMessagebox(title="Database Error", message=f"An error occurred: {e}", icon="cancel")
 
+    def generate_random_prescription_id(self):
+        cursor = self.mydb.cursor()
+        while True:
+            prescription_id = random.randint(100000, 999999)  # Generate a random 6-digit ID
+            cursor.execute("SELECT COUNT(*) FROM Prescription WHERE Prescription_ID = %s", (prescription_id,))
+            if cursor.fetchone()[0] == 0:  # If the ID is not already in use, break the loop
+                break
+        cursor.close()
+        return prescription_id
+
     def submit_prescription(self):
         patient_id = self.patient_id_entry.get()
         medicine_name = self.medicine_combo.get()
@@ -110,11 +119,13 @@ class DoctorPrescriptionsPage:
             cursor.execute("SELECT Medicine_ID FROM Medicine WHERE M_Name = %s", (medicine_name,))
             medicine_id = cursor.fetchone()[0]
 
+            prescription_id = self.generate_random_prescription_id()
+
             prescription_query = """
-                INSERT INTO Prescription (Patient_ID, Medicine_ID, Date, Dosage, Doctor_ID)
-                VALUES (%s, %s, %s, %s, %s)
+                INSERT INTO Prescription (Prescription_ID, Patient_ID, Medicine_ID, Date, Dosage, Doctor_ID)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(prescription_query, (patient_id, medicine_id, date, dosage, self.doctor_id))
+            cursor.execute(prescription_query, (prescription_id, patient_id, medicine_id, date, dosage, self.doctor_id))
             self.mydb.commit()
             cursor.close()
 
@@ -131,3 +142,4 @@ class DoctorPrescriptionsPage:
 
     def run(self):
         self.app.mainloop()
+

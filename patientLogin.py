@@ -122,21 +122,7 @@ passwordEntry.pack(anchor="w",padx=(30,0))
 
 
 
-def entryTest():
-    username = usernameEntry.get()
-    print(username)
 
-def click_handler():
-    print("Login Button Clicked")
-
-
-
-
-
-def googlelogin():
-    webbrowser.open_new("https://www.google.com.tr/")
-    #sys.exit()
-    # patientMain.mainloop()
 def createAccountCommand():
     subprocess.Popen([sys.executable,  "createAccount.py"])
     # subprocess.run(["python", "mainPage.py"])
@@ -209,7 +195,7 @@ def loginChecker():
 
 loginButton = CTkButton(master=frame,command=loginChecker, text="Login", fg_color="#601E88", hover_color="#E44982",
                         font=("Arial Bold", 12), text_color="#ffffff", width=240,height=30).pack(anchor="w", pady=(30, 0), padx=(30, 0))
-googleButton= CTkButton(master=frame, text="Continue With Google", command=googlelogin,  fg_color="#EEEEEE", hover_color="#EEEEEE",
+googleButton= CTkButton(master=frame, text="Continue With Google",   fg_color="#EEEEEE", hover_color="#EEEEEE",
                         font=("Arial Bold", 11), text_color="#601E88", width=240, image=google_icon).pack(anchor="w", pady=(10, 0), padx=(30, 0))
 signupButton: CTkButton = CTkButton(master=frame,text="Create Account",command=createAccountCommand,fg_color="#EEEEEE",hover_color="#EEEEEE",
                                     font=("Arial Bold",12),text_color="#0000FF",width=240,height=30,)
