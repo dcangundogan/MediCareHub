@@ -97,7 +97,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 For any questions or feedback, please contact:
 
 - **Name:** Duygu Can Gündoğan
-- **Community:** Bilim ve Teknoloji
+- **Contact:** gundogandcan@gmail.com
+
 ```
 
 Feel free to customize this `README.md` further to better fit your project's specifics and needs.
