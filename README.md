@@ -75,14 +75,37 @@ python src/main.py
 
 ## File Structure
 
-- `src/main.py` - The main entry point of the application.
-- `src/lab_page.py` - Handles the lab test results display.
-- `src/invoice_page.py` - Manages the invoice details and payment processing.
-- `src/staff_management.py` - Manages staff details.
-- `src/wage_management.py` - Handles the wage slip management.
-- `db/hospital_management_system.sql` - SQL script to set up the database.
-- `images/` - Contains images used in the application.
+- `adminAppointment.py` - Manage appointments for admin.
+- `adminDepartment.py` - Manage departments.
+- `adminDoctors.py` - Manage doctor records.
+- `adminLogin.py` - Admin login functionality.
+- `adminMain.py` - Main admin interface.
+- `adminPatient.py` - Manage patient records for admin.
+- `adminSQLEditor.py` - SQL editor for admin.
+- `adminStaffs.py` - Manage staff records.
+- `adminWageSlip.py` - Manage wage slips.
+- `createAccount.py` - User account creation.
+- `doctorAppointment.py` - Manage appointments for doctors.
+- `doctorEditProfile.py` - Edit doctor profiles.
+- `doctorLogin.py` - Doctor login functionality.
+- `doctorMain.py` - Main doctor interface.
+- `doctorMedicalHistory.py` - Manage medical history for doctors.
+- `doctorPrescription.py` - Manage prescriptions.
+- `doctorProfile.py` - Doctor profile management.
+- `doctorWorkField.py` - Manage doctor work fields.
+- `mainPage.py` - Main page of the application.
+- `patientAppointment.py` - Manage patient appointments.
+- `patientEditProfile.py` - Edit patient profiles.
+- `patientInsurance.py` - Manage patient insurance details.
+- `patientInvoice.py` - Manage patient invoices.
+- `patientLab.py` - Manage patient lab results.
+- `patientLogin.py` - Patient login functionality.
+- `patientMain.py` - Main patient interface.
+- `patientProfile.py` - Patient profile management.
+- `patientsHistory.py` - Manage patient history.
+- `patientsPrescription.py` - Manage patient prescriptions.
 - `README.md` - This readme file.
+- -`LICENSE`-License file.
 
 ## Contributing
 
