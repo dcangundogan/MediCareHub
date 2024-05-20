@@ -105,7 +105,7 @@ python src/main.py
 - `patientsHistory.py` - Manage patient history.
 - `patientsPrescription.py` - Manage patient prescriptions.
 - `README.md` - This readme file.
-- -`LICENSE`-License file.
+- `LICENSE`-License file.
 
 ## Contributing
 
