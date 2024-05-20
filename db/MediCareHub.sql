@@ -589,7 +589,7 @@ select * from doctor
 select * from appointment
 select * from medical_history
 select * from prescription
-select * from insurance
+select * from insurance;
 
 DROP TRIGGER IF EXISTS audit_patient_changes;
 
