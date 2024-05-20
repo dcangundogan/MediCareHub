@@ -31,8 +31,8 @@ MediCareHubV2 is a comprehensive hospital management system designed to streamli
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/dcangundogan/MediCareHubV2.git
-   cd MediCareHubV2
+   git clone https://github.com/dcangundogan/MediCareHub.git
+   cd MediCareHub
 
 
 2. **Install the required packages:**
