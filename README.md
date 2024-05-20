@@ -1,6 +1,5 @@
 
 
-```markdown
 # MediCareHubV2
 
 MediCareHubV2 is a comprehensive hospital management system designed to streamline administrative and clinical operations. The system includes modules for managing patient records, lab results, invoices, staff details, and wage slips, all integrated with a MySQL database and a user-friendly interface built with customtkinter.
@@ -34,7 +33,7 @@ MediCareHubV2 is a comprehensive hospital management system designed to streamli
    ```bash
    git clone https://github.com/dcangundogan/MediCareHubV2.git
    cd MediCareHubV2
-   ```
+
 
 2. **Install the required packages:**
 
