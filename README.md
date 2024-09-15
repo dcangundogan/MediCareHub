@@ -1,8 +1,8 @@
 
 
-# MediCareHubV2
+# MediCareHub
 
-MediCareHubV2 is a comprehensive hospital management system designed to streamline administrative and clinical operations. The system includes modules for managing patient records, lab results, invoices, staff details, and wage slips, all integrated with a MySQL database and a user-friendly interface built with customtkinter.
+MediCareHub is a comprehensive hospital management system designed to streamline administrative and clinical operations. The system includes modules for managing patient records, lab results, invoices, staff details, and wage slips, all integrated with a MySQL database and a user-friendly interface built with customtkinter.
 
 ## Features
 
